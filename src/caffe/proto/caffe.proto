@@ -229,6 +229,7 @@ message LayerParameter {
   // LayerType.
   //
   // LayerType next available ID: 54 (last added: DROPOUT_CHANNEL)
+  // LayerType next available ID: 55 (last added: SELECT_SEG_BINARY_TWO_FRAMES)
   enum LayerType {
     // "NONE" layer type is 0th enum element so that we don't cause confusion
     // by defaulting to an existent LayerType (instead, should usually error if
@@ -272,6 +273,7 @@ message LayerParameter {
     RED_ACCURACY = 45;
     RELU = 18;
     SELECT_SEG_BINARY = 52;
+    SELECT_SEG_BINARY_TWO_FRAMES = 54;
     SIGMOID = 19;
     SIGMOID_CROSS_ENTROPY_LOSS = 27;
     SILENCE = 36;

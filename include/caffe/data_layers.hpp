@@ -507,6 +507,48 @@ class SelectSegBinaryLayer : public ImageDimPrefetchingDataLayer<Dtype> {
   int label_dim_;
 };
 
+template <typename Dtype>
+class SelectSegBinaryTwoFramesLayer : public ImageDimPrefetchingDataLayer<Dtype> {
+ public:
+  explicit SelectSegBinaryTwoFramesLayer(const LayerParameter& param)
+    : ImageDimPrefetchingDataLayer<Dtype>(param) {}
+  virtual ~SelectSegBinaryTwoFramesLayer();
+  virtual void DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top);
+
+  virtual inline LayerParameter_LayerType type() const {
+    return LayerParameter_LayerType_IMAGE_DATA;
+  }
+  virtual inline int ExactNumBottomBlobs() const { return 0; }
+  virtual inline int ExactNumTopBlobs() const { return 4; }
+  virtual inline bool AutoTopBlobs() const { return true; }
+
+ protected:
+  virtual void ShuffleImages();
+  virtual void InternalThreadEntry();
+
+ protected:
+  Blob<Dtype> transformed_label_;
+  Blob<Dtype> class_label_;
+  
+  Blob<Dtype> prefetch_data2_;
+  Blob<Dtype> transformed_data2_;
+
+  shared_ptr<Caffe::RNG> prefetch_rng_;
+
+  typedef struct SegItems {
+    std::string img1fn;
+    std::string img2fn;
+    std::string segfn;
+    int x1, y1, x2, y2;
+    vector<int> cls_label;
+  } SEGITEMS;
+
+  vector<SEGITEMS> lines_;
+  int lines_id_;
+  int label_dim_;
+};
+
 
 template <typename Dtype>
 class WindowClsDataLayer : public ImageDimPrefetchingDataLayer<Dtype> {

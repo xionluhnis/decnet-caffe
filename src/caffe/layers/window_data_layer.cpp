@@ -23,7 +23,7 @@
 //   'crop_size' indicates the desired warped size
 
 #if CV_VERSION_MAJOR == 3
-const int CV_LOAD_IMAGE_COLOR = cv::IMREAD_COLOR;
+// const int CV_LOAD_IMAGE_COLOR = cv::IMREAD_COLOR;
 #endif
 
 namespace caffe {
