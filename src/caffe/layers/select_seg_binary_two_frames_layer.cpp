@@ -289,6 +289,7 @@ void SelectSegBinaryTwoFramesLayer<Dtype>::InternalThreadEntry() {
     }
      
     cv_img_seg.push_back(cv_cropped_im1);
+    cv_img_seg.push_back(cv_cropped_im2);
     cv_img_seg.push_back(cv_cropped_seg);
 
     read_time += timer.MicroSeconds();
@@ -305,12 +306,12 @@ void SelectSegBinaryTwoFramesLayer<Dtype>::InternalThreadEntry() {
     offset = this->prefetch_label_.offset(item_id);
     this->transformed_label_.set_cpu_data(top_label + offset);
 
-    this->data_transformer_.TransformImgAndSeg(cv_img_seg, 
-	 &(this->transformed_data_), &(this->transformed_label_),
+    // Note: need to transform both images at the same time since it includes
+    // random flipping / cropping
+    this->data_transformer_.TransformImgImgAndSeg(cv_img_seg, 
+	 &(this->transformed_data_), &(this->transformed_data2_), &(this->transformed_label_),
 	 ignore_label);
-    // XXX to be safer, we could duplicate the transformation with the label
-    //      (but we'd do the label once too many)
-    this->data_transformer_.Transform(cv_cropped_im2, &(this->transformed_data2_));
+    
     trans_time += timer.MicroSeconds();
 
     // class label
