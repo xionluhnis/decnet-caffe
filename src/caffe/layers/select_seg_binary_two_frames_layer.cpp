@@ -354,6 +354,36 @@ void SelectSegBinaryTwoFramesLayer<Dtype>::InternalThreadEntry() {
   DLOG(INFO) << "Transform time: " << trans_time / 1000 << " ms.";
 }
 
+template <typename Dtype>
+void SelectSegBinaryTwoFramesLayer<Dtype>::Forward_cpu(
+    const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
+  // First, join the thread
+  BasePrefetchingDataLayer<Dtype>::JoinPrefetchThread();
+  DLOG(INFO) << "Thread joined";
+  // Copy the data
+  caffe_copy(this->prefetch_data_.count(), this->prefetch_data_.cpu_data(),
+             top[0]->mutable_cpu_data());
+  caffe_copy(this->prefetch_data2_.count(), this->prefetch_data2_.cpu_data(),
+             top[1]->mutable_cpu_data());
+  DLOG(INFO) << "Prefetch 1+2 copied";
+  if (this->output_labels_) {
+    caffe_copy(this->prefetch_label_.count(), this->prefetch_label_.cpu_data(),
+               top[2]->mutable_cpu_data());
+  }
+  if (this->output_data_dim_) {
+    caffe_copy(this->prefetch_data_dim_.count(), this->prefetch_data_dim_.cpu_data(),
+               top[3]->mutable_cpu_data());
+  }
+
+  // Start a new prefetch thread
+  DLOG(INFO) << "CreatePrefetchThread";
+  BasePrefetchingDataLayer<Dtype>::CreatePrefetchThread();
+}
+
+#ifdef CPU_ONLY
+STUB_GPU_FORWARD(SelectSegBinaryTwoFramesLayer, Forward);
+#endif
+
 INSTANTIATE_CLASS(SelectSegBinaryTwoFramesLayer);
 REGISTER_LAYER_CLASS(SELECT_SEG_BINARY_TWO_FRAMES, SelectSegBinaryTwoFramesLayer);
 }  // namespace caffe
