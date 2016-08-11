@@ -788,6 +788,7 @@ message TanHParameter {
 // Message that stores parameters used by ThresholdLayer
 message ThresholdParameter {
   optional float threshold = 1 [default = 0]; // Strictly positive values
+  optional bool positive = 2 [default = true]; // Whether to use 1 for positive values or 0
 }
 
 // Message that stores parameters used by PoolingLayer

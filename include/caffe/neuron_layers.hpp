@@ -719,6 +719,7 @@ class ThresholdLayer : public NeuronLayer<Dtype> {
   }
 
   Dtype threshold_;
+  Dtype positive_;
 };
 
 }  // namespace caffe
